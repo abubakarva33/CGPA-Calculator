@@ -1,0 +1,23 @@
+.b-color{
+  background: #0E0E0E;
+}
+.sb-color{
+  background: #063B5A;
+}
+
+
+input:focus {
+  background-color: #EAE0FE;
+  outline: none;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input{
+    border: none;
+}
+.bb-color{
+  background: #EAE0FE;
+}
