@@ -1,16 +1,11 @@
 
-// const inputTable = document.getElementById('input-table');
-// const div = document.createElement('table');
-// div.classList.add('table')
-// div.innerHTML= `
-
-// `
-// inputTable.appendChild(div);
-
 
 const subject = document.getElementById('subject');
 const creditNumber = document.getElementById('number');
 const marks = document.getElementById('marks');
+
+
+const markSheet = []
 
 document.getElementById('add-more').addEventListener('submit', function (e) {
   e.preventDefault()
@@ -38,6 +33,8 @@ document.getElementById('add-more').addEventListener('submit', function (e) {
   `
     tBody.appendChild(row);
 
+
+
     const marksheetTable = document.getElementById('marksheetTable');
     const marksheetRow = document.createElement('tr')
     marksheetRow.innerHTML = `
@@ -54,81 +51,84 @@ document.getElementById('add-more').addEventListener('submit', function (e) {
 let subjectIndividual;
 let numberIndividual;
 let markIndividual;
+
+
 document.getElementById('calculate').addEventListener('click', function () {
   const subjects = document.getElementsByClassName('subject')
-  for (const subject of subjects) {
-    subjectIndividual= subject.value
-  }
-
   const numbers = document.getElementsByClassName('number')
-  for (const number of numbers) {
-    numberIndividual= number.value
-  }
-
   const marks = document.getElementsByClassName('marks')
-  for (const mark of marks) {
-    markIndividual = mark.value
+
+  for (let i = 0; i < subjects.length; i++) {
+    const subject = subjects[i]
+    subjectIndividual = subject.value
+    markSheet[i] = {
+      ...markSheet[i],
+      subject: subject.value
+    }
   }
 
-  const totalCredit = document.getElementById('total-credit').innerText = (Number(numberIndividual)).toFixed(2);
-  const totalPoints = document.getElementById('total-points').innerText = (Number(totalCredit * cgpaCalculator(markIndividual))).toFixed(2);
-  const cgpa = document.getElementById('cgpa').innerText = (totalPoints / totalCredit).toFixed(2);
-  document.getElementById('result-commnent').innerText = isPassed(cgpa);
+  for (let i = 0; i < numbers.length; i++) {
+    const number = numbers[i]
+    subjectIndividual = number.value
+    markSheet[i] = {
+      ...markSheet[i],
+      number: number.value
+    }
+  }
 
-  document.getElementById('marksheetSubject').innerText = subjectIndividual;
-  document.getElementById('marksheetMarks').innerText = markIndividual;
-  document.getElementById('marksheetPoints').innerText = totalPoints;
-  document.getElementById('marksheetGrade').innerText = gradeCalculator(markIndividual);
-  document.getElementById('marksheetStatus').innerText = isPassed(cgpa);
+  for (let i = 0; i < marks.length; i++) {
+    const mark = marks[i]
+    subjectIndividual = marks.value
+    markSheet[i] = {
+      ...markSheet[i],
+      mark: mark.value
+    }
+  }
+
+
+
+
+  let credit = 0
+  let number = 0
+  // let subject = ''
+
+  markSheet.forEach(item => {
+    credit += Number(item.number)
+    number += cgpaCalculator(Number(item.mark)) * Number(item.number)
+  })
+  document.getElementById('total-credit').innerText = credit
+  document.getElementById('total-points').innerText = number
+  document.getElementById('cgpa').innerText = (number / credit).toFixed(2)
+  document.getElementById('result-commnent').innerText = isPassed(number / credit);
+
 
   document.getElementById('marksheetBtn').classList.remove('d-none');
   document.getElementById('add-morebtn').setAttribute('disabled', '');
   const marksheetTable = document.getElementById('marksheetTable');
-  const marksheetRow = document.createElement('tr')
-  marksheetRow.innerHTML = `
-            <th scope="row" colspan="4">TOTAL</th>
-            <td>N/A</td>
-  `
-  marksheetTable.appendChild(marksheetRow);
-  
-})
 
-document.getElementById('marksheetBtn').addEventListener('click', function () {
-  document.getElementById('marksheet').classList.remove('d-none')
-  
-})
+  marksheetTable.innerHTML = ''
 
-
-
-/* document.getElementById('calculate').addEventListener('click', function () {
-  const marks = Number(document.getElementById('marks').value);
-  const totalCredit = document.getElementById('total-credit').innerText = (Number(document.getElementById('number').value)).toFixed(2);
-  const totalPoints = document.getElementById('total-points').innerText = (Number(totalCredit * cgpaCalculator(marks))).toFixed(2);
-  const cgpa = document.getElementById('cgpa').innerText = (totalPoints / totalCredit).toFixed(2);
-  document.getElementById('result-commnent').innerText = isPassed(cgpa);
-
-
-  document.getElementById('marksheetSubject').innerText = subject.value;
-  document.getElementById('marksheetMarks').innerText = marks;
-  document.getElementById('marksheetPoints').innerText = totalPoints;
-  document.getElementById('marksheetGrade').innerText = gradeCalculator(marks);
-  document.getElementById('marksheetStatus').innerText = isPassed(cgpa);
-
-  const marksheetTable = document.getElementById('marksheetTable');
-  const marksheetRow = document.createElement('tr')
-  marksheetRow.innerHTML = `
-            <th scope="row" colspan="4">TOTAL</th>
-              <td>N/A</td>
-  `
-  marksheetTable.appendChild(marksheetRow);
-  document.getElementById('marksheetBtn').classList.remove('d-none');
+  markSheet.forEach(item => {
+    console.log(item);
+    const marksheetRow = document.createElement('tr')
+    marksheetRow.innerHTML = `
+      <td id="marksheetSubject" class="marksheetSubject">${item.subject}</td>
+      <td id="marksheetMarks"> ${item.mark} </td>
+      <td id="marksheetPoints"> ${cgpaCalculator(Number(item.mark))} </td>
+      <td id="marksheetGrade">${gradeCalculator(Number(item.mark))}</td>
+      <td id="marksheetStatus">${isPassed(cgpaCalculator(Number(item.mark)) * Number(item.number)/Number(item.number))}</td>
+    `
+    marksheetTable.appendChild(marksheetRow);
+  })
 
 })
 
 document.getElementById('marksheetBtn').addEventListener('click', function () {
   document.getElementById('marksheet').classList.remove('d-none')
+
 })
- */
+
+
 
 
 
@@ -158,8 +158,9 @@ function isPassed(cgpa) {
 
 
 function gradeCalculator(marks) {
+  console.log(marks)
   if (marks < 40) {
-    return "Failed"
+    return "F"
   }
   else if (marks >= 40 && marks < 45) {
     return "D"
@@ -198,6 +199,7 @@ function gradeCalculator(marks) {
 
 
 function cgpaCalculator(marks) {
+  console.log(marks)
   if (marks < 40) {
     return 0.00;
   }
